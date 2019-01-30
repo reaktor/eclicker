@@ -18,6 +18,7 @@ struct buttons {
   unsigned int b:1;
   unsigned int c:1;
   unsigned int d:1;
+  unsigned int e:1;//reset button
 };
 
 struct buttons prev;
@@ -30,16 +31,10 @@ void setup() {
     Serial.print("e-Paper init failed");
     return;
   }
-  epd.ClearFrameMemory(0xFF);
-  epd.DisplayFrame();
-  epd.ClearFrameMemory(0xFF);
-  epd.DisplayFrame();
 
-  paint.SetWidth(128);
-  paint.SetHeight(64);
-  paint.SetRotate(ROTATE_0);
-
-  labelSetup("AA", "BB", "CC", "DX");
+  clearDisplay();
+  labelSetup("Option A", "Option B", "Option C", "Option D");
+  epd.DisplayFrame();
 }
 
 void loop() {
@@ -51,6 +46,7 @@ void buttonSetup() {
   pinMode(3, INPUT);
   pinMode(5, INPUT);
   pinMode(6, INPUT);
+  pinMode(12, INPUT);//reset button
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -59,10 +55,10 @@ void buttonLoop() {
   current.b = digitalRead(3);
   current.c = digitalRead(5);
   current.d = digitalRead(6);
+  current.e = digitalRead(12);
 
   if (current.a != prev.a) {
     if (current.a == HIGH) {
-      say("a");
       delay(50);
     }
     prev.a = current.a;
@@ -70,7 +66,7 @@ void buttonLoop() {
 
   if (current.b != prev.b) {
     if (current.b == HIGH) {
-      say("b");
+      // say("b");
       delay(50);
     }
     prev.b = current.b;
@@ -78,7 +74,7 @@ void buttonLoop() {
 
   if (current.c != prev.c) {
     if (current.c == HIGH) {
-      say("c");
+      // say("c");
       delay(50);
     }
     prev.c = current.c;
@@ -86,26 +82,64 @@ void buttonLoop() {
 
   if (current.d != prev.d) {
     if (current.d == HIGH) {
-      say("d");
+      // say("d");
       delay(50);
     }
     prev.d = current.d;
   }
+
+  //The reset button
+  if (current.e != prev.e) {
+    if (current.e == HIGH) {
+      // Serial.print("matt");
+      clearDisplay();
+      labelSetup("Option Z", "Option B", "Option C", "Option D");
+      epd.DisplayFrame();
+      delay(50);
+    }
+    prev.e = current.e;
+  }
 }
 
-void say(const char* s) {
-  paint.Clear(COLORED);
-  paint.DrawStringAt(0, 0, s, &Font24, UNCOLORED);
-  epd.SetFrameMemory(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
-  epd.DisplayFrame();
+void say(const char* s, int yPosition) {
+  paint.Clear(UNCOLORED);
+  paint.DrawStringAt(0, 27, s, &Font20, COLORED);
+  epd.SetFrameMemory(paint.GetImage(), 0, yPosition, paint.GetWidth(), paint.GetHeight());
 }
 
 void labelSetup(const char* a, const char* b, const char* c, const char* d) {
-  paint.Clear(COLORED);
-  paint.DrawStringAt(0, 0, a, &Font24, UNCOLORED);
-  paint.DrawStringAt(0, 40, b, &Font24, UNCOLORED);
-  paint.DrawStringAt(0, 80, c, &Font24, UNCOLORED);
-  paint.DrawStringAt(0, 120, d, &Font24, UNCOLORED);
-  epd.SetFrameMemory(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+  paint.SetWidth(128);
+  paint.SetHeight(64);
+  paint.SetRotate(ROTATE_0);
+
+  say(a, 0);
+  say(b, 74);
+  say(c, 148);
+  say(d, 222);
+  dividerSetup();
+}
+
+//Todo: subroutine this
+void dividerSetup() {
+  paint.SetWidth(128);
+  paint.SetHeight(2);
+
+  paint.Clear(UNCOLORED);
+  paint.DrawLine(0, 0, 300, 1, COLORED);
+  epd.SetFrameMemory(paint.GetImage(), 0, 74, paint.GetWidth(), paint.GetHeight());
+
+  paint.Clear(UNCOLORED);
+  paint.DrawLine(0, 0, 300, 1, COLORED);
+  epd.SetFrameMemory(paint.GetImage(), 0, 148, paint.GetWidth(), paint.GetHeight());
+
+  paint.Clear(UNCOLORED);
+  paint.DrawLine(0, 0, 300, 1, COLORED);
+  epd.SetFrameMemory(paint.GetImage(), 0, 222, paint.GetWidth(), paint.GetHeight());
+}
+
+void clearDisplay() {
+  epd.ClearFrameMemory(0xFF);
+  epd.DisplayFrame();
+  epd.ClearFrameMemory(0xFF);
   epd.DisplayFrame();
 }
