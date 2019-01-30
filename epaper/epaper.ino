@@ -1,3 +1,13 @@
+/**
+ * Todo:
+ * - Subroutine dividerSetup()
+ * - Fix bug where weird character is added to label on update https://stackoverflow.com/questions/10227806/c-c-str-adding-strange-characters-to-the-end-of-the-string
+ * - Fetch new label data on reset push
+ * - Turn button listening into a loop
+ * - Send pings to server when any button is pressed
+ * - Resize text labels based on length
+ * - Implement word wrapping
+ */
 #include <SPI.h>
 #include <epd2in9.h>
 #include <epdpaint.h>
@@ -45,11 +55,9 @@ void loop() {
   if (Serial.available() > 0) {
     incoming = Serial.readString();
     char* a = incoming.c_str();
-
     clearDisplay();
     labelSetup(a, a, "Matt", "Matt");
     epd.DisplayFrame();
-
   }
 }
 
