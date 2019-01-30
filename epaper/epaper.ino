@@ -18,7 +18,9 @@
 #define IF_INVERT_COLOR     0
 
 String incoming = "";
-char* newLabels;
+String newLabels[4];
+int labelIteration = 0;
+int offSet = 0;
 unsigned char image[1024];
 Paint paint(image, 0, 0); // width should be the multiple of 8
 Epd epd;
@@ -47,17 +49,23 @@ void setup() {
   clearDisplay();
   labelSetup("Option A", "Option B", "Option C", "Option D");
   epd.DisplayFrame();
+  Serial.print("1");
 }
 
 void loop() {
   buttonLoop();
-
-  if (Serial.available() > 0) {
-    incoming = Serial.readString();
-    char* a = incoming.c_str();
-    clearDisplay();
-    labelSetup(a, a, "Matt", "Matt");
+  //todo: handle invalid inputs
+  while(Serial.available() > 0) {
+    if (labelIteration == 0) {
+      clearDisplay();
+    }
+    newLabels[labelIteration] = Serial.readStringUntil('|');
+    labelIteration++;
+  }
+  if (labelIteration >= 4) {
+    labelSetup(newLabels[0].c_str(), newLabels[1].c_str(), newLabels[2].c_str(), newLabels[3].c_str());
     epd.DisplayFrame();
+    labelIteration = 0;
   }
 }
 
@@ -79,6 +87,7 @@ void buttonLoop() {
 
   if (current.a != prev.a) {
     if (current.a == HIGH) {
+      Serial.print("a");
       delay(50);
     }
     prev.a = current.a;
@@ -86,7 +95,7 @@ void buttonLoop() {
 
   if (current.b != prev.b) {
     if (current.b == HIGH) {
-      // say("b");
+      Serial.print("b");
       delay(50);
     }
     prev.b = current.b;
@@ -94,7 +103,7 @@ void buttonLoop() {
 
   if (current.c != prev.c) {
     if (current.c == HIGH) {
-      // say("c");
+      Serial.print("c");
       delay(50);
     }
     prev.c = current.c;
@@ -102,7 +111,7 @@ void buttonLoop() {
 
   if (current.d != prev.d) {
     if (current.d == HIGH) {
-      // say("d");
+      Serial.print("d");
       delay(50);
     }
     prev.d = current.d;
@@ -111,9 +120,7 @@ void buttonLoop() {
   //The reset button
   if (current.e != prev.e) {
     if (current.e == HIGH) {
-      clearDisplay();
-      labelSetup("Option Z", "Option B", "Option C", "Option D");
-      epd.DisplayFrame();
+      Serial.print("2");
       delay(50);
     }
     prev.e = current.e;
@@ -121,6 +128,10 @@ void buttonLoop() {
 }
 
 void say(const char* s, int yPosition) {
+  Serial.println(s);
+  Serial.println(yPosition);
+  Serial.println("");
+
   paint.Clear(UNCOLORED);
   paint.DrawStringAt(0, 27, s, &Font20, COLORED);
   epd.SetFrameMemory(paint.GetImage(), 0, yPosition, paint.GetWidth(), paint.GetHeight());
