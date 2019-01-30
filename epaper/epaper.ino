@@ -7,6 +7,8 @@
 #define UNCOLORED   1
 #define IF_INVERT_COLOR     0
 
+String incoming = "";
+char* newLabels;
 unsigned char image[1024];
 Paint paint(image, 0, 0); // width should be the multiple of 8
 Epd epd;
@@ -39,6 +41,16 @@ void setup() {
 
 void loop() {
   buttonLoop();
+
+  if (Serial.available() > 0) {
+    incoming = Serial.readString();
+    char* a = incoming.c_str();
+
+    clearDisplay();
+    labelSetup(a, a, "Matt", "Matt");
+    epd.DisplayFrame();
+
+  }
 }
 
 void buttonSetup() {
@@ -91,7 +103,6 @@ void buttonLoop() {
   //The reset button
   if (current.e != prev.e) {
     if (current.e == HIGH) {
-      // Serial.print("matt");
       clearDisplay();
       labelSetup("Option Z", "Option B", "Option C", "Option D");
       epd.DisplayFrame();
