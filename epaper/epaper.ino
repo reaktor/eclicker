@@ -42,13 +42,9 @@ void setup() {
   Serial.begin(9600);
   buttonSetup();
   if (epd.Init(lut_full_update) != 0) {
-    Serial.print("e-Paper init failed");
     return;
   }
-
-  clearDisplay();
-  labelSetup("Option A", "Option B", "Option C", "Option D");
-  epd.DisplayFrame();
+  greet();
   Serial.print("1");
 }
 
@@ -111,6 +107,9 @@ void buttonLoop() {
 
   if (current.d != prev.d) {
     if (current.d == HIGH) {
+      if (current.c == HIGH) {
+        clearDisplay();
+      }
       Serial.print("d");
       delay(50);
     }
@@ -128,13 +127,18 @@ void buttonLoop() {
 }
 
 void say(const char* s, int yPosition) {
-  Serial.println(s);
-  Serial.println(yPosition);
-  Serial.println("");
-
   paint.Clear(UNCOLORED);
   paint.DrawStringAt(0, 27, s, &Font20, COLORED);
   epd.SetFrameMemory(paint.GetImage(), 0, yPosition, paint.GetWidth(), paint.GetHeight());
+}
+
+void greet() {
+  clearDisplay();
+  paint.SetWidth(128);
+  paint.SetHeight(64);
+  paint.SetRotate(ROTATE_0);
+  say("Welcome!", 112);
+  epd.DisplayFrame();
 }
 
 void labelSetup(const char* a, const char* b, const char* c, const char* d) {
