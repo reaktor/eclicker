@@ -8,6 +8,7 @@ const port = new SerialPort('/dev/cu.usbmodem14201', {
 
 port.on('data', function (data) {
   let datum = data.toString().trim();
+  console.log(datum)
   switch (datum) {
     case 'a':
       break;

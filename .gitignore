@@ -1,2 +1,2 @@
 .DS_Store
-client/node_modules
+*node_modules*
