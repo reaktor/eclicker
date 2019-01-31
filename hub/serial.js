@@ -1,5 +1,7 @@
 const BOOTUP = "1";
 const RESET = "2";
+var fs = require('fs');
+const fileName = '/Users/mkorostoff/Arduino/config.json';
 
 const SerialPort = require('serialport');
 const port = new SerialPort('/dev/cu.usbmodem14201', {
@@ -19,12 +21,16 @@ port.on('data', function (data) {
     case 'd':
       break;
     case RESET:
-      port.write('Update|From|The|Cloud');
+      port.write(getConfig());
       break;
     case BOOTUP:
-      port.write('Download|From|The|Cloud');
+      port.write(getConfig());
       break;
     default:
       break;
+  }
+  function getConfig() {
+    let conf = fs.readFileSync(fileName, "utf8");
+    return JSON.parse(conf).labels.join('|');
   }
 })
