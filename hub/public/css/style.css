@@ -1,0 +1,13 @@
+.container {
+  margin-top: 1em;
+}
+#submit {
+  margin-left: 1rem;
+}
+#alert {
+  opacity: 0;
+  transition: opacity 1s;
+}
+#alert.visible {
+  opacity: 1;
+}
