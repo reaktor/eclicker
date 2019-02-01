@@ -11,3 +11,44 @@
 #alert.visible {
   opacity: 1;
 }
+.driver {
+  width: 200px;
+  position: absolute;
+  top: 195px;
+  left: 0;
+  z-index: 9;
+  transition: top 1.5s, left 1.5s;
+}
+.house {
+  position: absolute;
+  text-align: center;
+}
+.time {
+  color: green;
+  font-weight: bold;
+  transition: color 2s;
+}
+#time2 {
+  color: orange;
+}
+#time3 {
+  color: red;
+}
+.delivered {
+  font-weight: bold;
+}
+.house img {
+  width: 130px;
+}
+.house:nth-child(1) {
+  left: 400px;
+  top: 300px;
+}
+.house:nth-child(2) {
+  left: 800px;
+  top: 200px;
+}
+.house:nth-child(3) {
+  left: 1200px;
+  top: 500px;
+}

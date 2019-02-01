@@ -1,5 +1,6 @@
 const BOOTUP = "1";
 const RESET = "2";
+const fetch = require("node-fetch");
 var fs = require('fs');
 const fileName = '/Users/mkorostoff/Arduino/config.json';
 
@@ -13,24 +14,34 @@ port.on('data', function (data) {
   console.log(datum)
   switch (datum) {
     case 'a':
-      break;
     case 'b':
-      break;
     case 'c':
-      break;
     case 'd':
+      fetch(getCallbackUrl(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([datum]),
+      });
       break;
     case RESET:
-      port.write(getConfig());
+      port.write(getLabels());
       break;
     case BOOTUP:
-      port.write(getConfig());
+      port.write(getLabels());
       break;
     default:
       break;
   }
-  function getConfig() {
+  function getLabels() {
+    return getConf().labels.join('|');
+  }
+  function getCallbackUrl() {
+    return getConf().url;
+  }
+  function getConf() {
     let conf = fs.readFileSync(fileName, "utf8");
-    return JSON.parse(conf).labels.join('|');
+    return JSON.parse(conf);
   }
 })
