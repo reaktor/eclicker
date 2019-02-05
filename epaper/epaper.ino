@@ -1,10 +1,7 @@
 /**
  * Todo:
  * - Subroutine dividerSetup()
- * - Fix bug where weird character is added to label on update https://stackoverflow.com/questions/10227806/c-c-str-adding-strange-characters-to-the-end-of-the-string
- * - Fetch new label data on reset push
  * - Turn button listening into a loop
- * - Send pings to server when any button is pressed
  * - Resize text labels based on length
  * - Implement word wrapping
  */
